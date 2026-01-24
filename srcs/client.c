@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 15:55:20 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/01/22 03:21:56 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/01/24 18:23:42 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,18 @@
 
 int main(int ac, char **av)
 {
-    char    *string;
     int     len;
+	int		i;
 
     if (ac != 3)
-        return (ft_printf("usage : client PID_SERVER STRING_TO_SEND\n"));
+        return (write(2, "usage : client PID_SERVER STRING_TO_SEND\n", 45), 0);
     len = ft_strlen(av[2]);
-    string = (char *)malloc(sizeof(char) * (len + 1));
-    if (!string)
-        return (ft_printf("an error occur\n"));
-    send_octet((unsigned char)'a', ft_atoi(av[1]));
-    ft_printf("%s", string);
+	i = 0;
+	while (av[2][i])
+	{
+		send_octet((unsigned char)av[2][i++], ft_atoi(av[1]));
+		usleep(100000);
+	}
+	send_octet((unsigned char)'\0', ft_atoi(av[1]));
     return (0);
 }
