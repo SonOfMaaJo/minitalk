@@ -6,93 +6,92 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 15:56:15 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/01/24 18:43:46 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/01/25 16:16:52 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-static unsigned char    octet;
+static	t_client	**clients;
 
-static unsigned char power(int nb, int power)
+static	t_client	*s_find_client(pid_t si_pid, t_client **clients)
 {
-    int i;
-    int res;
+	t_client	*client;
 
-    i = 0;
-    res = 1;
-    while (i++ < power)
-        res = res * nb;
-    return ((unsigned char)res);
+	if ((!*client) || ((*client)->next == NULL && (*client)->pid != si_pid))
+		return (add_client(si_pid, clients));
+	else if ((*client)->pid == si_pid)
+		return (*client)
+	else
+		return (s_find_client(si_pid, &((*clients)->next)); 
 }
 
-void    handler(int sig)
+static int	set_string_client(t_client *client, unsigned char octet)
+{
+	char	*string;
+	int		len;
+
+	string = client->string;
+	len = ft_strlen(string)
+	client->string = (char *)calloc(len + 2, sizeof(char));
+	if (!(client->string))
+		return (0);
+	ft_strlcat(client->string, string, len + 2);
+	(client->string)[len + 1] = octet;
+	(client->string)[len + 2] = '\0';
+	return (1);
+}
+	
+	
+static void    handler_talk(int sig, siginfo_t *info, void *context)
 {
     static unsigned char    byte;
-    static int              power1;
-    static int             power2;
+	static unisgned char	octet;
+    static int				power1;
+    static int				power2;
+	t_client				*client;
 
+	client = s_find_client(info->si_pid, clients);
+	if (!client)
+	{
+		free_client(clients);
+		exit(EXIT_FAILURE);
+	}	
     if (sig == SIGUSR2)
          byte += power(2, 3 - power1++);
     else
         power1++;
     if (power1 == 4)
     {
-        octet = byte * power(16, 1 - power2++);
+        octet += byte * power(16, 1 - power2++);
         power1 = 0;
         byte  = 0;
 		if (power2 == 2)
+		{
 			power2 = 0;
+			if (!set_string_client(client, octet))
+			{
+				free_client(clients);
+				exit(EXIT_FAILURE);
+			}
+		}
     }
-}
-
-static void	*get_string(char **string)
-{
-    char	*string_tmp;
-    int     len;
-
-	if (*string == NULL)
-	{
-		*string = (char *)calloc(1, sizeof(char));
-		if (!*string)
-			return (write(2, "Error : an allocation fail", 26), NULL);
-	} 
-    string_tmp = *string;
-    len = ft_strlen(string_tmp);
-    *string = (char *)calloc(len + 2, sizeof(char));
-    if (!*string)
-    	return (free(*string), write(2, "Error : an allocation fail", 26), NULL);
-    ft_strlcat(*string, string_tmp, len + 2);
-    *string[len + 1] = octet;
-	*string[len + 2] = '\0';
-	free(string_tmp);
-	return (NULL);
 }
 
 int main(void)
 {
-	char		**string;
 	t_sigaction	sa;
-
-	sa.sa_handler = handler;
+	sa.sa_sigaction = handler_talk;
+	sa.sa_flags = SA_SIGINFO;
 	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = SA_RESTART;
-	octet = 1;
-	string = (char **)malloc(sizeof(char *));
-	if (!string)
-		return (write(2, "Error : an allocation fail\n", 26), 0);
-	*string = NULL;
-    ft_printf("%d\n", getpid());
-    if (sigaction(SIGUSR1, &sa, NULL) != -1 
-		&& sigaction(SIGUSR2, &sa, NULL) != -1)
-	{
-        get_string(string);
-		if (!octet)
-		{
-			ft_printf("%s\n", *string);
-			free(*string);
-			*string = NULL;
-		}
+	clients = (t_client **)malloc(sizeof(t_client *));
+	if (!clients)
+		return (write(2, "Error : allocation fail.\n", 26), 0);
+	ft_printf("%d\n", getpid());
+	if (sigaction(SIGUSR1, &sa, NULL) == -1 || sigaction(SIGUSR2, &sa, NULL) == -1)
+	{	
+		free_client(clients);
+		return (wirte(2, "Error : fail to catch an signal.\n", 35), 1);
 	}
     while (1)
         sleep(1);

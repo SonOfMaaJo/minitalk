@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 01:00:13 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/01/22 03:57:03 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/01/25 16:04:30 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,18 @@ static int send_bytes(int oc, pid_t pid_server)
     }
 }
 
+unsigned char	power(int nb, int power)
+{
+	int	i;
+	int	res;
+
+	i = 0;
+	res = 1;
+	while (i++ < power)
+		res = res * nb;
+	return ((unsigned char)res);
+}
+
 int send_octet(unsigned char octet, pid_t pid_server)
 {
     if(!send_bytes(octet / 16, pid_server))
@@ -45,3 +57,45 @@ int send_octet(unsigned char octet, pid_t pid_server)
         return (0);
     return (1);
 }
+
+t_client	*add_client(pid_t si_pid, t_client **clients)
+{
+		t_client	*client;
+		t_client	*tmp;
+
+		client = (t_client *)malloc(sizeof(t_client));
+		tmp = NULL;
+		if (!client)
+			return (NULL)
+		client->pid = si_pid;
+		client->next = NULL;
+		client->string = (char *)calloc(1, sizeof(char));
+		if (!(client->string))
+			return (free(client), NULL);
+		if (*string)
+		{
+			tmp	= *clients;
+			while (tmp->next != NULL)
+				tmp = tmp->next;
+			tmp->next = client
+		}
+		else
+			*client = client;
+		return (client);
+}
+
+void free_client(t_client **clients)
+{
+	t_client	*client;
+
+	client = (*clients)->next;
+	free((*clients)->string);
+	free(*clients)
+	if (client == NULL)
+	{
+		free(clients);
+		return ;
+	}
+	free_client(&client);
+}
+	
