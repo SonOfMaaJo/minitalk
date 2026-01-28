@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 15:55:20 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/01/28 15:15:59 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/01/28 21:18:52 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,22 +21,28 @@ static void	ack_handler(int sig)
 	else if (sig == SIGUSR2)
 	{
 		write(2, "Error: server didn't receive my message.\n", 41);
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 }
 
 static void	send_bits(pid_t pid, unsigned char octet)
 {
 	int	bit;
+	int	sig;
 
 	bit = 7;
 	while (bit >= 0)
 	{
 		g_receiver = 0;
 		if ((octet >> bit) & 1)
-			kill(pid, SIGUSR2);
+			sig = SIGUSR2;
 		else
-			kill(pid, SIGUSR1);
+			sig = SIGUSR1;
+		if (kill(pid, sig) == -1)
+		{
+			write(2, "Error : Fail to send an signal.\n", 33);
+			exit(EXIT_FAILURE);
+		}
 		while (!g_receiver)
 			usleep(100);
 		bit--;

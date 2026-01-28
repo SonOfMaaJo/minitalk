@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 15:56:15 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/01/28 15:45:02 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/01/28 21:20:10 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,17 @@
 
 static t_client	*g_client;
 
-static void	send_feedf(int sig)
+static void	send_feedf(int sig, char *MSG)
 {
 	kill(g_client->pid, sig);
 	if (sig == SIGUSR1)
 		ft_printf("%s\n", g_client->str);
 	free_client(&g_client);
+	if (sig == SIGUSR2)
+	{
+		write (2, MSG, ft_strlen(MSG));
+		exit(EXIT_FAILURE);
+	}
 }
 
 static void	handle_signal(int sig, siginfo_t *info, void *context)
@@ -31,19 +36,20 @@ static void	handle_signal(int sig, siginfo_t *info, void *context)
 	if (!g_client)
 		g_client = init_client(info->si_pid);
 	if (!g_client)
-		return ;
+		send_feedf(SIGUSR2, "Error : an allocation fail\n");
 	if (sig == SIGUSR2)
 		octet |= (1 << (7 - bits));
 	if (++bits == 8)
 	{
 		if (octet == '\0')
-			send_feedf(SIGUSR1);
+			send_feedf(SIGUSR1, NULL);
 		else if (!add_char(g_client, octet))
-			send_feedf(SIGUSR2);
+			send_feedf(SIGUSR2, "Error : an allocation fail\n");
 		bits = 0;
 		octet = 0;
 	}
-	kill(info->si_pid, SIGUSR1);
+	if (kill(info->si_pid, SIGUSR1) == -1)
+		send_feedf(SIGUSR2, "Error : fail to send a signal\n");
 }
 
 int	main(void)
@@ -59,7 +65,7 @@ int	main(void)
 	if (sigaction(SIGUSR1, &sa, NULL) == -1
 		|| sigaction(SIGUSR2, &sa, NULL) == -1)
 	{
-		ft_printf(SIG_ERROR_MSG);
+		write(2, SIG_ERROR_MSG, ft_strlen(SIG_ERROR_MSG));
 		return (1);
 	}
 	while (1)
