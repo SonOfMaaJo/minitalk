@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 01:00:13 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/01/31 15:23:51 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/01/31 17:46:46 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,8 @@ t_client	*init_client(pid_t pid)
 	client->str = (char *)ft_calloc(client->size, sizeof(char));
 	if (!client->str)
 	{
-		free(client);
-		return (kill(pid, SIGUSR2), NULL);
+		kill(pid, SIGUSR2);
+		return (free(client), NULL);
 	}
 	return (client);
 }
@@ -67,7 +67,7 @@ int	add_char(t_client *client, char octet)
 		new_str = (char *)ft_calloc(client->size * 2, sizeof(char));
 		if (!new_str)
 			return (0);
-		ft_memcpy(new_str, client->str, client->len);
+		ft_memmove(new_str, client->str, client->len);
 		free(client->str);
 		client->str = new_str;
 		client->size *= 2;
