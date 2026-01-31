@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_minitalk.c                                   :+:      :+:    :+:   */
+/*   utils_minitalk_bonus.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 01:00:13 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/01/28 15:02:36 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/01/31 15:23:51 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
+#include "minitalk_bonus.h"
 
 int	is_valid_pid(char *pid)
 {

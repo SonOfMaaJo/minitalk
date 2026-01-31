@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minitalk.h                                         :+:      :+:    :+:   */
+/*   minitalk_bonus.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 15:49:08 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/01/28 14:38:15 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/01/31 15:22:36 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINITALK_H
-# define MINITALK_H
+#ifndef MINITALK_BONUS_H
+# define MINITALK_BONUS_H
 # include "../libft/libft.h"
 # include <signal.h>
 # define SIG_ERROR_MSG "Error: Failed to set up signal handlers.\n"
